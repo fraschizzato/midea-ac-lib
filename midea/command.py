@@ -1,10 +1,31 @@
 import logging
-
+import datetime
 import midea.crc8 as crc8
 
 VERSION = '0.1.13'
 
 _LOGGER = logging.getLogger(__name__)
+
+class status_command:
+    def __init__(self, device_type=0xAC):
+        self.data = bytearray([
+            0xaa, 0x20, 0xac, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x03, 0x41, 0x81, 0x00, 0xff, 0x03, 0xff,
+            0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+        ])
+
+        self.data[0x02] = device_type
+
+    def finalize(self):
+        # Add the CRC8
+        self.data[0x1d] = crc8.calculate(self.data[16:])
+        # Set the length of the command data
+        self.data[0x01] = len(self.data)
+        return self.data
+
+
+
 
 class base_command:
 
@@ -16,6 +37,7 @@ class base_command:
             0x00, 0x30, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00, 0x03, 0xcc
         ])
+
         self.data[0x02] = device_type
 
     def finalize(self):

@@ -6,7 +6,7 @@ import logging
 import midea.crc8 as crc8
 from midea.cloud import cloud
 from midea.command import appliance_response
-from midea.command import base_command as request_status_command
+from midea.command import status_command as request_status_command
 from midea.command import set_command
 from midea.packet_builder import packet_builder
 
